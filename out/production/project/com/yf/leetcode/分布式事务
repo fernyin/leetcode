@@ -1,0 +1,37 @@
+主业务活动记录表(T_MAIN_BUSINESS_ACTIVITY)
+
+列名	数据类型	长度	小数位	主键	允许空	默认值	字段说明
+transaction_id	Varchar2	36		√			唯一标识一次业务活动，UUID表示
+status	Varchar2	10					BEGIN：开始状态
+END：业务活动结束
+handle_failure	Varchar2	10					业务活动处理失败，未结束时的处理机制
+CANCEL：回滚，已完成的分支服务执行回滚操作；
+RECONFIRM：重复提交，未完成的分支服务执行提交操作；
+action_count	Number	1					分支服务个数
+create_time	date						主业务活动创建时间
+update_time	date				√		状态改变更新时间
+business_type	Varchar2	10			√		服务项目：1:交易服务; 2: 理财服务;3:P2P资金托管服务;4:结算服务
+							
+              
+分支原子活动记录表(T_SUB_BUSINESS_ACTION)
+
+列名	数据类型	长度	小数位	主键	允许空	默认值	字段说明
+action_id	Varchar2	36		√			分支活动标识，UUID
+transaction_id	Varchar2	36					所属主业务活动ID
+service_name	Varchar2	64					即分支服务名，可通过该服务名获得服务调用
+method_name	Varchar2	64					分支服务方法名，执行提交或回滚动作的方法名
+params_value	Varchar2	1024			√		提交或回滚方法对应参数的序列化值，通过该值进行反序列化后可获得实体对象
+create_time	date						分支服务活动创建时间
+							
+当前原子活动状态记录表(T_CURRENT_ACTION)      
+
+列名	数据类型	长度	小数位	主键	允许空	默认值	字段说明
+transaction_id	Varchar2	36		√			所属主业务活动ID
+service_name	Varchar2	64		√			分支服务名
+submit_method_name	Varchar2	64					提交方法名；
+action_status	Varchar2	10					当前原子活动状态：
+CONFIRM：服务已提交完成
+CANCEL：服务已回滚
+create_time	date						原子活动创建时间
+update_time	date				√		状态改变更新时间
+							
